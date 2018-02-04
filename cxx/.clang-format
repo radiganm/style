@@ -10,6 +10,9 @@ Language:        Cpp
 #    ConstructorInitializerIndentWidth: 4      -> 2
 #    ContinuationIndentWidth:           4      -> 2
 #    TabWidth:                          8      -> 2
+#    AfterNamespace:                    false  -> true
+#    ColumnLimit:                       80     -> 78    (so support external indentation)
+#    NamespaceIndentation:              None   -> All
 #
 AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
@@ -35,7 +38,7 @@ BraceWrapping:
   AfterControlStatement: false
   AfterEnum:       false
   AfterFunction:   false
-  AfterNamespace:  false
+  AfterNamespace:  true
   AfterObjCDeclaration: false
   AfterStruct:     false
   AfterUnion:      false
@@ -46,7 +49,7 @@ BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
-ColumnLimit:     80
+ColumnLimit:     78
 CommentPragmas:  '^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 2
@@ -70,7 +73,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 MacroBlockBegin: ''
 MacroBlockEnd:   ''
 MaxEmptyLinesToKeep: 1
-NamespaceIndentation: None
+NamespaceIndentation: All
 ObjCBlockIndentWidth: 2
 ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: false

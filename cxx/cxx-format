@@ -20,7 +20,8 @@
 
   my $directory = $opts{'d'};
   my $debug     = exists $opts{'g'};
-  my $verbose   = exists $opts{'v'};
+ #my $verbose   = exists $opts{'v'};
+  my $verbose   = 1;
 
   my @files;
   find ( sub {
