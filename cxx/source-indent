@@ -1,0 +1,78 @@
+#!/usr/bin/perl
+### source-indent
+### Copyright 2018 Mac Radigan
+### All Rights Reserved
+
+  use strict;
+  use v5.10.1;
+  no warnings "all";
+  use Getopt::Std;
+
+  our(%opts);
+  getopt ('gw:', \%opts);
+
+  my $debug = exists $opts{'g'};
+  my $width = 2;
+  if (exists $opts{'w'}) 
+  {
+    $width = "$opts{'w'}" + 0;
+  }
+  my $pad   = ' ' x $width;
+
+  my %states = (
+    Start  => 'Header',
+    Header => 'Body',
+    Body   => 'Footer',
+    Footer => 'Final',
+    Final  => 'Final',
+  );
+  my $state = $states{Start};
+
+  sub T
+  {
+    $state = $states{$state};
+  }
+
+  sub is_comment
+  {
+    my ($line) = shift @_;
+    if ($line =~ m/^(#|\/).*/)
+    {
+      return 1;
+    }
+    return undef;
+  }
+
+  sub is_eof_tag
+  {
+    my ($line) = shift @_;
+    if ($line =~ m/^(#|\/).*\*EOF\*.*/)
+    {
+      return 1;
+    }
+    return undef;
+  }
+
+  my $lineno = 0;
+  while (<>)
+  {
+    my $line = $_;
+    ++$lineno;
+    given ( $state ) 
+    ## transition
+    {
+      when ("Header") {if (!is_comment($line)) {T;}}
+      when ("Body")   {if (is_eof_tag($line))  {T;}}
+      when ("Footer") {die "invalid state";        }
+    }
+    printf "%4.4d %-6s:", $lineno, $state if $debug;
+    ## format
+    given ( $state ) 
+    {
+      when ("Header") {print "$line";     }
+      when ("Body")   {print "$pad$line"; }
+      when ("Footer") {print "$line";     }
+    }
+  }
+
+### *EOF*

@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+### cxx-format
+### Copyright 2018 Mac Radigan
+### All Rights Reserved
+
+  use strict;
+  use v5.10.1;
+  no warnings "all";
+  use Cwd 'abs_path';
+  use Getopt::Std;
+  use File::Find;
+  use File::Basename;
+
+  our(%opts);
+  getopt ('gvd:', \%opts);
+
+  my $root = dirname(abs_path($0));
+
+  if (!exists $opts{'d'}) { die "no directory specified.  use -d <PATH>"; }
+
+  my $directory = $opts{'d'};
+  my $debug     = exists $opts{'g'};
+  my $verbose   = exists $opts{'v'};
+
+  my @files;
+  find ( sub {
+      return unless -f;
+      return unless /\.(C|c|cc|cpp|cxx|H|h|hh|hpp|hxx)$/;
+      push @files, $File::Find::name;
+  }, $directory );
+
+ #if ($debug)
+ #{
+ #  my $formatted_list = sprintf "%s\n" x @files, @files;
+ #  print $formatted_list;
+ #}
+
+  foreach my $filename (@files)
+  {
+    if ($debug)
+    {
+      print 'o-'; print '=' x 76; print '-o'; print "\n";
+      printf "%78s", "$filename"; print "\n";
+      print 'o-'; print '=' x 76; print '-o'; print "\n";
+      my $formatted_source = ` clang-format $filename | $root/source-indent.pl | highlight -O ansi --syntax cpp `;
+      print $formatted_source;
+    }
+    else
+    {
+      if ($verbose) {printf "$filename\n";}
+      my $formatted_source = ` clang-format $filename | $root/source-indent `;
+      if ($formatted_source eq "") {die "Empty file '$filename' $!"};
+      open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+      print $fh $formatted_source;
+      close $fh;
+    }
+  }
+
+### *EOF*
