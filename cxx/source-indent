@@ -53,6 +53,16 @@
     return undef;
   }
 
+  sub is_empty
+  {
+    my ($line) = shift @_;
+    if ($line =~ m/^$/)
+    {
+      return 1;
+    }
+    return undef;
+  }
+
   my $lineno = 0;
   while (<>)
   {
@@ -70,7 +80,17 @@
     given ( $state ) 
     {
       when ("Header") {print "$line";     }
-      when ("Body")   {print "$pad$line"; }
+      when ("Body")   
+      {
+        if (is_empty($line)) 
+        {
+          print "$line"; 
+        } 
+        else 
+        {
+          print "$pad$line"; 
+        }
+      }
       when ("Footer") {print "$line";     }
     }
   }
